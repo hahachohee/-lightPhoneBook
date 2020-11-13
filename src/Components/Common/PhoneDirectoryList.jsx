@@ -26,16 +26,18 @@ const Styled = {
 
 const PhoneDiretoryList = (props) => {
 
-    const { info, onChange } = props
+    const { infos, onChange, onClickEditButton, remove } = props
 
-    const list = info.map((res, i) => {
+    const list = infos.map((res, i) => {
         return(
             <Styled.PhoneBookInfoWrapper
                 key={i}
             >
                 <PhoneDirectoryInfo 
                     info={res}
+                    onClickEditButton={onClickEditButton}
                     onChange={onChange}
+                    remove={remove}
                 />
             </Styled.PhoneBookInfoWrapper>
         )

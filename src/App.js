@@ -1,6 +1,10 @@
   import React, { useState } from 'react'
   import styled from 'styled-components'
+  
   import PhoneDirectoryList from './Components/Common/PhoneDirectoryList';
+  import AddUser from './Components/Common/AddUser'
+  import SearchUser from './Components/Common/SearchUser'
+import moment from 'moment';
 
   const Styled = {
     Body: styled.div`
@@ -31,16 +35,23 @@
   };
 function App() {
 
+  const [phoneDirectorySearch, setPhoneDirectorySearch] = useState('')
+    
+
   const [phoneDirectoryInfos, setPhoneDirectoryInfos] = useState([
     {
       id : 0,
       name : '',
-      phoneNumber : ''
+      phoneNumber : '',
+      isEditing : false,
+      isDate : moment().format('YYYY-MM-DD HH:mm:ss')
     },
     {
       id : 1,
       name : '',
-      phoneNumber : ''
+      phoneNumber : '',
+      isEditing : false,
+      isDate : moment().format('YYYY-MM-DD HH:mm:ss')
     },
 
   ])
@@ -54,7 +65,6 @@ function App() {
   // }
 
   const handleChange = (e, id) => {
-    console.log(e, id)
     setPhoneDirectoryInfos((prevState) => {
       return prevState.map((res) => {
         if(res.id === id){
@@ -68,27 +78,70 @@ function App() {
     })
   }
 
+  const handleClickEditButton = (id) =>{
+    setPhoneDirectoryInfos((prevState) => {
+      return prevState.map((res) =>{
+        if( res.id === id){
+          return{
+            ...res,
+            isEditing : !res.isEditing
+          }
+        }
+        return res
+      })
+    })
+  }
 
+
+  const handleClickRemoveButton = (id) => {
+    setPhoneDirectoryInfos((prevState) =>{
+      return prevState.filter(res => res.id !== id)
+    })
+  }
+
+  const handleCreate = () => {
+    setPhoneDirectoryInfos((prevState) => {
+      return prevState.concat(
+        {
+          id : prevState.length + 1,
+          name : '',
+          phoneNumber : '',
+          isEditing : false,
+          isDate : moment().format('YYYY-MM-DD HH:mm:ss')
+        }
+      )
+    })
+  }
+
+
+  const handleSearch = (e) => {
+    
+    setPhoneDirectorySearch(
+        e.target.value
+      )
+     
+      }
   
   return (
     <Styled.Body>
       <Styled.Container>
       <Styled.Add>
-        {/* <UserSearch onChange={handleSearch}/> */}
+        <SearchUser 
+          info={phoneDirectorySearch}
+          onChange={handleSearch}
+        />
       </Styled.Add>
       <Styled.Add>
-        {/* <AddUser onClick={handleCreate} /> */}
+        <AddUser onClick={handleCreate}/>
       </Styled.Add>
         <Styled.Wrapper>
-          {/* <PhoneBookList
-            infos={phoneBookInfos}
-            onChange={handleOnChangePhoneBookInfo}
-            onClickEditButton={handleOnClickPhoneBookInfoEditButton}
-            remove={handleRemove}
-          /> */}
           <PhoneDirectoryList
-            info={phoneDirectoryInfos} 
+            infos={phoneDirectoryInfos.filter((res) =>{
+              return res.name.indexOf(phoneDirectorySearch) > -1
+            })} 
+            onClickEditButton={handleClickEditButton}
             onChange={handleChange}
+            remove={handleClickRemoveButton}
           />
         </Styled.Wrapper>
       </Styled.Container>
